@@ -30,21 +30,35 @@ chain_with_history = RunnableWithMessageHistory(
     history_messages_key="history"
 )
 
-# Example 
+
 session_id = "user_123"
 
+while True:
+    user_input = input("you:")
+    if user_input.strip() in ['exit', 'quit' 'bye']:
+        print("AI Bot: Bye")
+        break
+    
+    response = chain_with_history.invoke(
+        {"input": user_input},
+        config={"configurable": {"session_id": session_id}}
+    )
 
-response1 = chain_with_history.invoke(
-    {"input": "Hello! How are you?"},
-    config={"configurable": {"session_id": session_id}}
-)
-print("AI:", response1.content)
+    print("AI:", response.content)
 
-response2 = chain_with_history.invoke(
-    {"input": "What was my previous message?"},
-    config={"configurable": {"session_id": session_id}}
-)
-print("AI:", response2.content)
+
+# ------- Example ---------
+# response1 = chain_with_history.invoke(
+#     {"input": "Hello! How are you?"},
+#     config={"configurable": {"session_id": session_id}}
+# )
+# print("AI:", response1.content)
+
+# response2 = chain_with_history.invoke(
+#     {"input": "What was my previous message?"},
+#     config={"configurable": {"session_id": session_id}}
+# )
+# print("AI:", response2.content)
 
 print("\nConversation History:")
 for message in store[session_id].messages:
