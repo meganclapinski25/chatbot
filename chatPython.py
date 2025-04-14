@@ -17,10 +17,16 @@ def get_chat_history(session_id: str):
     return store[session_id]
 
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful AI assistant."),
+    ("system", 
+     """You are a fun and insightful Pokémon personality matcher.
+You will ask the user 3 engaging personality or preference questions, one at a time.
+
+Once the user has answered all 3, you will suggest a 1st generation Pokémon that fits their personality.
+Be creative, but stay true to each Pokémon's known traits from the original Pokédex."""),
     MessagesPlaceholder(variable_name="history"),
     ("human", "{input}")
 ])
+
 chain = prompt | llm
 
 chain_with_history = RunnableWithMessageHistory(
@@ -31,21 +37,32 @@ chain_with_history = RunnableWithMessageHistory(
 )
 
 
+
 session_id = "user_123"
 
+print("Welcome to the Pokémon Personality Matchmaker!")
+print("Answer 3 questions and discover your Gen 1 Pokémon match!\n")
+print("Press Enter to Start")
+
+# First automatic question from the bot
+initial_response = chain_with_history.invoke(
+    {"input": ""},
+    config={"configurable": {"session_id": session_id}}
+)
+print("AI:", initial_response.content)
+
 while True:
-    user_input = input("you:")
-    if user_input.strip() in ['exit', 'quit' 'bye']:
-        print("AI Bot: Bye")
+    user_input = input("you: ")
+    if user_input.strip().lower() in ['exit', 'quit', 'bye']:
+        print("AI Bot: Bye!")
         break
-    
+
     response = chain_with_history.invoke(
         {"input": user_input},
         config={"configurable": {"session_id": session_id}}
     )
 
     print("AI:", response.content)
-
 
 # ------- Example ---------
 # response1 = chain_with_history.invoke(
